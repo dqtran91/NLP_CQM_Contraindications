@@ -6,10 +6,11 @@ import yaml
 
 
 class SqlOperations:
-    # load yml file to dictionary
-    credentials = yaml.load(open('credentials.yml'))
+    # Load yml file to dictionary
+    with open('credentials.yml') as file:
+        credentials = yaml.load(file, Loader=yaml.FullLoader)
 
-    # information used to create a sql_alchemy_utility connection
+    # information used to create a sql connection
     sql_user: str = credentials['database']['username']
     sql_pass: str = credentials['database']['password']
     dbname: str = 'mimic'
@@ -27,7 +28,7 @@ class SqlOperations:
     @classmethod
     def select_db(cls, sql: str) -> DataFrame:
         """
-        read data from sql_alchemy_utility and return as pandas DataFrame
+        read data from sql and return as pandas DataFrame
         """
 
         read_query: TextClause = sa.text(cls.search_path + sql)
@@ -37,10 +38,10 @@ class SqlOperations:
     @classmethod
     def write_df_to_db(cls, df: DataFrame, table: str):
         """
-        write df to sql_alchemy_utility
+        write df to sql
         """
 
-        # write back to the sql_alchemy_utility. Heavy operation. Took 30 minutes to complete.
+        # write back to the sql. Heavy operation. Took 30 minutes to complete.
         df.to_sql(table, cls.engine, schema=cls.schema)
 
     @classmethod
