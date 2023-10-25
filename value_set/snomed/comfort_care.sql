@@ -10,8 +10,8 @@
  This was done by searching for the following terms in the procedure- and diagnosis-icd tables: comfort, dying, hospice, and terminal.
  There was no results.
  */
--- DROP MATERIALIZED VIEW IF EXISTS value_set.comfort_measures;
--- CREATE MATERIALIZED VIEW IF NOT EXISTS value_set.comfort_measures AS
--- SELECT DISTINCT icd9_code AS icd9_code
--- FROM mimiciii.d_icd_procedures
--- WHERE icd9_code IN ();
+DROP MATERIALIZED VIEW IF EXISTS value_set.comfort_measures;
+CREATE MATERIALIZED VIEW IF NOT EXISTS value_set.comfort_measures AS
+SELECT DISTINCT icd9_code
+FROM mimiciii.d_icd_procedures
+WHERE icd9_code IN ('');
