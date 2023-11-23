@@ -1,7 +1,5 @@
 /* print out schema */
-SELECT table_name,
-       column_name,
-       data_type
+SELECT table_name, column_name, data_type
 FROM information_schema.columns
 WHERE table_schema NOT IN ('information_schema', 'pg_catalog')
   AND table_name NOT IN ('noteevents_05012023', 'inputevents_mv', 'inputevents_cv', 'ignore_item_id')
@@ -14,6 +12,13 @@ WHERE ndc !~ '^[0-9]+$';
 
 /* Change data type of a column */
 ALTER TABLE prescriptions
-ALTER COLUMN ndc TYPE BIGINT
-USING (ndc::BIGINT);
+    ALTER COLUMN ndc TYPE BIGINT USING (ndc::BIGINT);
 
+/* search for column*/
+SELECT t.table_schema, t.table_name, c.column_name
+FROM information_schema.tables        t
+INNER JOIN information_schema.columns c ON c.table_name = t.table_name AND c.table_schema = t.table_schema
+WHERE c.column_name LIKE '%location%'
+  AND t.table_schema NOT IN ('information_schema', 'pg_catalog')
+  AND t.table_type = 'BASE TABLE'
+ORDER BY t.table_schema;
