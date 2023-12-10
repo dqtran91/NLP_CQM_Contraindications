@@ -75,7 +75,7 @@ WHERE drug ILIKE '%anti-embolism%'
 CREATE INDEX idx_vte1prophylaxis_ndc ON vte1prophylaxis_prescriptions (ndc);
 ANALYSE vte1prophylaxis_prescriptions;
 
--- Create table for stroke icd9 codes  https://www.ncbi.nlm.nih.gov/books/NBK559173/
+-- Create table for stroke procedure codes  https://www.ncbi.nlm.nih.gov/books/NBK559173/
 DROP TABLE IF EXISTS stroke_icd;
 CREATE TABLE IF NOT EXISTS stroke_icd AS
 SELECT icd9_code
