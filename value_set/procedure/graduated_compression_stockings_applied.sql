@@ -12,7 +12,8 @@
  */
 DROP MATERIALIZED VIEW IF EXISTS value_set.graduated_compression_stockings_applied;
 CREATE MATERIALIZED VIEW IF NOT EXISTS value_set.graduated_compression_stockings_applied AS
-SELECT DISTINCT *
-FROM mimiciii.d_icd_procedures
-WHERE long_title ILIKE '%graduated_compression%'
-   OR short_title ILIKE '%graduated_compression%'
+SELECT DISTINCT p.hadm_id
+FROM mimiciii.procedures_icd p
+JOIN mimiciii.d_icd_procedures d ON p.icd9_code = d.icd9_code
+WHERE d.long_title ILIKE '%graduated_compression%'
+   OR d.short_title ILIKE '%graduated_compression%'

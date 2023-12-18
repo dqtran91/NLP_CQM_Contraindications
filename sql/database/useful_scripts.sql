@@ -22,3 +22,21 @@ WHERE c.column_name LIKE '%location%'
   AND t.table_schema NOT IN ('information_schema', 'pg_catalog')
   AND t.table_type = 'BASE TABLE'
 ORDER BY t.table_schema;
+
+/* search for all materialized views */
+SELECT matviewname FROM pg_catalog.pg_matviews;
+
+
+/* drop all materialized views */
+DO $$
+DECLARE
+    view_name TEXT;
+BEGIN
+    FOR view_name IN
+        SELECT schemaname || '.' || matviewname
+        FROM pg_catalog.pg_matviews
+    LOOP
+        EXECUTE 'DROP MATERIALIZED VIEW ' || view_name || ';';
+        RAISE NOTICE 'Dropped materialized view: %', view_name;
+    END LOOP;
+END $$;

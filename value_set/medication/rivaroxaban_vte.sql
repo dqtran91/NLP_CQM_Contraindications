@@ -9,7 +9,7 @@
  */
 DROP MATERIALIZED VIEW IF EXISTS value_set.rivaroxaban_vte;
 CREATE MATERIALIZED VIEW IF NOT EXISTS value_set.rivaroxaban_vte AS
-SELECT DISTINCT drug
+SELECT DISTINCT hadm_id
 FROM mimiciii.prescriptions
 WHERE LOWER(drug) LIKE '%rivaroxaban%'
    OR LOWER(drug_name_poe) LIKE '%rivaroxaban%'

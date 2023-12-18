@@ -9,7 +9,7 @@
  */
 DROP MATERIALIZED VIEW IF EXISTS value_set.injectable_factor_xa_inhibitors_vte;
 CREATE MATERIALIZED VIEW IF NOT EXISTS value_set.injectable_factor_xa_inhibitors_vte AS
-SELECT distinct drug
+SELECT distinct hadm_id
 FROM mimiciii.prescriptions
 WHERE LOWER(drug) LIKE '%fondaparinux%'
    OR LOWER(drug_name_poe) LIKE '%fondaparinux%'

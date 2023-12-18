@@ -158,7 +158,7 @@ DISTINCT
 SELECT *
 FROM encounter_without_vte_or_obstetrical_diagnosis AS qualifyingencounter
 WHERE EXISTS (SELECT hadm_id
-              FROM icustays AS location
+              FROM mimiciii.icustays AS location
               WHERE location.hadm_id = qualifyingencounter.hadm_id
                 AND UPPER(first_careunit) != 'NICU'
                 AND los >= 1 -- length of stay in days
@@ -220,7 +220,7 @@ DISTINCT
  // Note:
     'SCIP' stands for Surgical Care Improvement Project
  */
-SELECT *
+SELECT qualifyingencounter.*
 FROM encounter_without_vte_or_obstetrical_diagnosis           AS qualifyingencounter
 JOIN (SELECT *
       FROM mimiciii.procedures_icd AS procedure
@@ -264,7 +264,7 @@ UNION DISTINCT
  // Note:
     No comfort measures are found in the mimic-iii database.
  */
-SELECT *
+SELECT qualifyingencounter.*
 FROM encounter_without_vte_or_obstetrical_diagnosis           AS qualifyingencounter
 JOIN value_set.comfort_measures AS comfortmeasures
      ON qualifyingencounter.hadm_id = comfortmeasures.hadm_id
@@ -286,8 +286,21 @@ UNION DISTINCT
   // Note:
     No comfort measures are found in the mimic-iii database.
  */
-SELECT *
+SELECT qualifyingencounter.*
 FROM encounter_without_vte_or_obstetrical_diagnosis           AS qualifyingencounter
 JOIN value_set.comfort_measures AS comfortmeasures
      ON qualifyingencounter.hadm_id = comfortmeasures.hadm_id;
 
+/**********************************************
+  Population Criteria:
+  Denominator
+    "Initial Population"
+
+ **********************************************/
+DROP TABLE IF EXISTS denominator;
+CREATE TEMP TABLE IF NOT EXISTS denominator AS
+SELECT *
+FROM encounter_without_vte_or_obstetrical_diagnosis
+EXCEPT
+SELECT *
+FROM denominator_exclusions;

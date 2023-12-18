@@ -13,7 +13,8 @@
  */
 DROP MATERIALIZED VIEW IF EXISTS value_set.intermittent_pneumatic_compression_devices_applied;
 CREATE MATERIALIZED VIEW IF NOT EXISTS value_set.intermittent_pneumatic_compression_devices_applied AS
-SELECT DISTINCT *
-FROM mimiciii.d_icd_procedures
-WHERE long_title ILIKE '%pneumo boots%'
-OR short_title ILIKE '%pneumo boots%'
+SELECT DISTINCT p.hadm_id
+FROM mimiciii.procedures_icd p
+JOIN mimiciii.d_icd_procedures d ON p.icd9_code = d.icd9_code
+WHERE d.long_title ILIKE '%pneumo boots%'
+OR d.short_title ILIKE '%pneumo boots%'

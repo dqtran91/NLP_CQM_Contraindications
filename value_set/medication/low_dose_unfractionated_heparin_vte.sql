@@ -13,7 +13,7 @@
  */
 DROP MATERIALIZED VIEW IF EXISTS value_set.low_dose_unfractionated_heparin_vte;
 CREATE MATERIALIZED VIEW IF NOT EXISTS value_set.low_dose_unfractionated_heparin_vte AS
-SELECT DISTINCT drug, drug_name_poe, drug_name_generic, formulary_drug_cd, gsn, ndc, prod_strength, route
+SELECT DISTINCT hadm_id
 FROM mimiciii.prescriptions
 WHERE (LOWER(drug) LIKE '%heparin%' OR LOWER(drug_name_poe) LIKE '%heparin%' OR
        LOWER(drug_name_generic) LIKE '%heparin%')

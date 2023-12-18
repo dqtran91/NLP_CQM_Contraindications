@@ -12,7 +12,8 @@
  */
 DROP MATERIALIZED VIEW IF EXISTS value_set.venous_foot_pumps_ordered;
 CREATE MATERIALIZED VIEW IF NOT EXISTS value_set.venous_foot_pumps_ordered AS
-SELECT DISTINCT *
-FROM mimiciii.d_icd_procedures
-WHERE long_title ILIKE '%foot pump%'
-  AND short_title ILIKE '%foot pump%';
+SELECT DISTINCT p.hadm_id
+FROM mimiciii.procedures_icd p
+JOIN mimiciii.d_icd_procedures d ON p.icd9_code = d.icd9_code
+WHERE d.long_title ILIKE '%foot pump%'
+  AND d.short_title ILIKE '%foot pump%';

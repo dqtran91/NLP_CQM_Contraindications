@@ -9,7 +9,7 @@
  */
 DROP MATERIALIZED VIEW IF EXISTS value_set.warfarin;
 CREATE MATERIALIZED VIEW IF NOT EXISTS value_set.warfarin AS
-SELECT DISTINCT drug
+SELECT DISTINCT hadm_id
 FROM mimiciii.prescriptions
 WHERE LOWER(drug) LIKE '%warfarin%'
    OR LOWER(drug_name_poe) LIKE '%warfarin%'
