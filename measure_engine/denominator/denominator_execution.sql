@@ -82,8 +82,8 @@ CREATE TEMP TABLE IF NOT EXISTS encounter_without_vte_or_obstetrical_diagnosis A
         so all encounters are considered.
      */
 SELECT *
-FROM QDM.Encounter AS EncounterInpatient
-WHERE CQL.LengthInDays(relevantPeriod) <= 120 -- relevantPeriod in days
+FROM qdm.Encounter AS encounter_inpatient
+WHERE cql.length_in_days(relevantPeriod) <= 120 -- relevantPeriod in days
 /*
  Definitions:
  VTE.Admission without VTE or Obstetrical Conditions
@@ -96,19 +96,13 @@ WHERE CQL.LengthInDays(relevantPeriod) <= 120 -- relevantPeriod in days
  */
 INTERSECT
 SELECT *
-FROM QDM.Encounter AS inpatientencounter
+FROM qdm.encounter AS inpatient_encounter
 WHERE NOT EXISTS (SELECT 1
-                  FROM JSONB_ARRAY_ELEMENTS(InpatientEncounter.diagnoses) AS EncounterDiagnoses
-                  WHERE EncounterDiagnoses ->> 'code' IN (SELECT icd9_code
-                                                          FROM value_set.obstetrics
-                                                          UNION
-                                                          DISTINCT
-                                                          SELECT icd9_code
-                                                          FROM value_set.venous_thromboembolism
-                                                          UNION
-                                                          DISTINCT
-                                                          SELECT icd9_code
-                                                          FROM value_set.obstetrics_vte));
+                  FROM JSONB_ARRAY_ELEMENTS(inpatient_encounter.diagnoses) AS encounter_diagnoses
+                  WHERE (encounter_diagnoses ->> 'code' IN (SELECT code FROM cql.get_icd9_code('valueSet', 'obstetrics'))
+                      OR encounter_diagnoses ->> 'code' IN (SELECT code FROM cql.get_icd9_code('valueSet', 'venousThromboembolism'))
+                      OR encounter_diagnoses ->> 'code' IN (SELECT code FROM cql.get_icd9_code('valueSet', 'obstetricsVTE'))));
+
 /**********************************************
   Population Criteria:
   Denominator

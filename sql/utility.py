@@ -1,3 +1,8 @@
+import json
+import os
+from io import TextIOWrapper
+from typing import Dict, List
+
 from pandas import DataFrame, read_sql_query
 import sqlalchemy as sa
 from sqlalchemy.engine import URL, Engine
@@ -36,16 +41,40 @@ class SqlOperations:
         return read_sql_query(read_query, cls.engine)
 
     @classmethod
-    def write_df_to_db(cls, df: DataFrame, table: str):
+    def write_df_to_db(cls, df: DataFrame, table: str) -> None:
         """
         write df to sql
         """
 
-        # write back to the sql. Heavy operation. Took 30 minutes to complete.
         df.to_sql(table, cls.engine, schema=cls.schema)
 
     @classmethod
-    def drop_table(cls, sql):
-        # drop table if exists
+    def drop_table(cls, sql: str) -> None:
+        """
+        drop table if exists
+        """
         with cls.engine.begin() as connection:
             connection.execute(cls.search_path + sql)
+
+    @classmethod
+    def insert_json_into_table(cls, icd9_file_path: str, vsac_folder_path: str) -> None:
+        """
+        Read the icd9 measures to know which value sets to load into the database
+        """
+        with open(icd9_file_path, 'r') as file:
+            icd9_list: List[str] = json.load(file)['oid']
+
+        for oid in icd9_list:
+            with open(os.path.join(vsac_folder_path, oid + '.json'), 'r') as file:
+                data: Dict[str, any] = json.load(file)[0]
+
+            # Insert parsed data into the table
+            table_name: str = data['name'].replace(' ', '_').lower()
+            contains: list = data.get('expansion', {}).get('contains', [{}])
+
+            for item in contains:
+                cls.engine.execute(
+                    "INSERT INTO value_set.%s (system, version, code, display) VALUES (%s, %s, %s, %s)",
+                    (table_name, item.get('system', ''), item.get('version', ''), item.get('code', ''),
+                     item.get('display', ''))
+                )

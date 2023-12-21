@@ -6,44 +6,47 @@
  Inclusion: Includes concepts that represent a diagnosis for venous thromboembolism related to pregnancy or obstetrics
  Exclusion: No exclusions.
  Definition Version: 20121025
+ 63460,
+ 63461,
+ 63462,
+ 63560,
+ 63561,
+ 63562,
+ 63660,
+ 63661,
+ 63662,
+ 63760,
+ 63761,
+ 63762,
+ 6386,
+ 6396,
+ 67130,
+ 67131,
+ 67133,
+ 67140,
+ 67142,
+ 67144,
+ 67150,
+ 67151,
+ 67152,
+ 67153,
+ 67154,
+ 67190,
+ 67191,
+ 67192,
+ 67193,
+ 67194,
+ 67320,
+ 67321,
+ 67322,
+ 67323,
+ 67324
  */
-DROP MATERIALIZED VIEW IF EXISTS value_set.obstetrics_vte;
-CREATE MATERIALIZED VIEW value_set.obstetrics_vte AS
-SELECT DISTINCT icd9_code AS icd9_code
-FROM mimiciii.d_icd_diagnoses
-WHERE icd9_code IN (
-'63460',
-'63461',
-'63462',
-'63560',
-'63561',
-'63562',
-'63660',
-'63661',
-'63662',
-'63760',
-'63761',
-'63762',
-'6386',
-'6396',
-'67130',
-'67131',
-'67133',
-'67140',
-'67142',
-'67144',
-'67150',
-'67151',
-'67152',
-'67153',
-'67154',
-'67190',
-'67191',
-'67192',
-'67193',
-'67194',
-'67320',
-'67321',
-'67322',
-'67323',
-'67324')
+DROP TABLE IF EXISTS value_set.obstetrics_vte;
+CREATE TABLE value_set.obstetrics_vte
+(
+    system  TEXT NOT NULL,
+    version TEXT NOT NULL,
+    code    TEXT NOT NULL,
+    display TEXT NOT NULL
+);

@@ -9,24 +9,26 @@
  Exclusion: Excludes concepts that represent a diagnosis of venous thromboembolism (VTE) that is chronic or history of,
             located in the upper extremities, and veins not listed in the inclusion criteria.
  Definition Version: 20121025
+ 41511,
+ 41513,
+ 41519,
+ 45111,
+ 45119,
+ 4512,
+ 45181,
+ 4519,
+ 4532,
+ 45340,
+ 45341,
+ 45387,
+ 45389,
+ 4539
  */
-DROP MATERIALIZED VIEW IF EXISTS value_set.venous_thromboembolism;
-CREATE MATERIALIZED VIEW value_set.venous_thromboembolism AS
-SELECT DISTINCT icd9_code AS icd9_code
-FROM mimiciii.d_icd_diagnoses
-WHERE icd9_code IN (
-'41511',
-'41513',
-'41519',
-'45111',
-'45119',
-'4512',
-'45181',
-'4519',
-'4532',
-'45340',
-'45341',
-'45387',
-'45389',
-'4539'
-)
+DROP TABLE IF EXISTS value_set.venous_thromboembolism;
+CREATE TABLE IF NOT EXISTS value_set.venous_thromboembolism
+(
+    system  TEXT NOT NULL,
+    version TEXT NOT NULL,
+    code    TEXT NOT NULL,
+    display TEXT NOT NULL
+);

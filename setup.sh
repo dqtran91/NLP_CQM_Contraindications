@@ -1,4 +1,4 @@
-conda install sentencepiece gensim nltk sqlalchemy pytest
+conda install sentencepiece gensim nltk sqlalchemy pytest requests=2.31.0
 conda clean -ya
 
 conda install -c huggingface transformers

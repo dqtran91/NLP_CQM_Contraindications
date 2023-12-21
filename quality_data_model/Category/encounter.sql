@@ -1,25 +1,25 @@
 /*
  QDM Category: Encounter
  */
-CREATE OR REPLACE VIEW QDM.Encounter AS
-WITH DiagnosesAgg AS (SELECT hadm_id,
+CREATE OR REPLACE VIEW qdm.encounter AS
+WITH diagnoses_Agg AS (SELECT hadm_id,
                              JSONB_AGG(JSONB_BUILD_OBJECT('code', icd9_code, 'rank', seq_num)
                                        ORDER BY seq_num) AS diagnoses
                       FROM mimiciii.diagnoses_icd
                       GROUP BY hadm_id),
-     TransfersAgg AS (SELECT hadm_id,
+     transfers_agg AS (SELECT hadm_id,
                              JSONB_AGG(JSONB_BUILD_OBJECT('code', COALESCE(curr_wardid, prev_wardid), 'locationPeriod',
                                                           TSRANGE(intime, COALESCE(outtime, intime), '[]'))
-                                       ORDER BY intime) AS facilityLocation
+                                       ORDER BY intime) AS facility_location
                       FROM mimiciii.transfers AS tra
                       GROUP BY hadm_id)
 SELECT adm.subject_id,
        adm.hadm_id,
-       TSRANGE(LEAST(adm.admittime, adm.dischtime), adm.dischtime, '[]') AS relevantPeriod,
+       TSRANGE(LEAST(adm.admittime, adm.dischtime), adm.dischtime, '[]') AS relevant_period,
        da.diagnoses,
-       ta.facilityLocation,
+       ta.facility_location,
        NULL                                                              AS authorDatetime -- no similar column in MIMIC-III
 FROM mimiciii.admissions AS adm
-JOIN DiagnosesAgg        AS da ON da.hadm_id = adm.hadm_id
-JOIN TransfersAgg        AS ta ON ta.hadm_id = adm.hadm_id
-GROUP BY adm.subject_id, adm.hadm_id, adm.admittime, adm.dischtime, da.diagnoses, ta.facilityLocation;
+JOIN diagnoses_agg       AS da ON da.hadm_id = adm.hadm_id
+JOIN transfers_agg       AS ta ON ta.hadm_id = adm.hadm_id
+GROUP BY adm.subject_id, adm.hadm_id, adm.admittime, adm.dischtime, da.diagnoses, ta.facility_location;
