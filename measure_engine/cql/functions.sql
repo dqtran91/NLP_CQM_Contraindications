@@ -1,10 +1,10 @@
-CREATE OR REPLACE FUNCTION cql.normalize_interval(pointInTime TIMESTAMP, period TSRANGE) RETURNS TSRANGE AS
+CREATE OR REPLACE FUNCTION cql.normalize_interval(pointintime TIMESTAMP, period TSRANGE) RETURNS TSRANGE AS
 $$
 DECLARE
     result TSRANGE;
 BEGIN
-    IF pointInTime IS NOT NULL THEN
-        result := TSRANGE(pointInTime, pointInTime, '[]');
+    IF pointintime IS NOT NULL THEN
+        result := TSRANGE(pointintime, pointintime, '[]');
     ELSIF period IS NOT NULL THEN
         result := period;
     ELSE
@@ -15,19 +15,22 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION cql.length_in_days(valueInterval TSRANGE) RETURNS INTEGER AS
+CREATE OR REPLACE FUNCTION cql.to_tsrange(range_string TEXT) RETURNS TSRANGE AS
 $$
+DECLARE
+    start_ts TIMESTAMP;
+    end_ts   TIMESTAMP;
+    bounds   CHAR(2);
 BEGIN
-    RETURN EXTRACT(DAY FROM UPPER(valueInterval) - LOWER(valueInterval));
-END;
-$$ LANGUAGE plpgsql;
+    SELECT SUBSTRING(range_string FROM '"([^"]+)",')::TIMESTAMP INTO start_ts;
+    SELECT SUBSTRING(range_string FROM ',"([^"]+)"')::TIMESTAMP INTO end_ts;
 
-CREATE OR REPLACE FUNCTION cql.get_icd9_code(schema_name TEXT, table_name TEXT) RETURNS TABLE(code TEXT) AS $$
-BEGIN
-    RETURN QUERY EXECUTE format(
-        'SELECT REPLACE(code, ''.'', '''') AS code
-        FROM %I.%I
-        WHERE system = ''http://hl7.org/fhir/sid/icd-9-cm''', LOWER(schema_name), LOWER(table_name)
-    );
+    bounds := CASE
+                  WHEN range_string ~ '\[.*\)' THEN '[)'
+                  WHEN range_string ~ '\(.*\]' THEN '(]'
+                  WHEN range_string ~ '\(.*\)' THEN '()'
+                  ELSE '[]' END;
+
+    RETURN TSRANGE(start_ts, end_ts, bounds);
 END;
 $$ LANGUAGE plpgsql;

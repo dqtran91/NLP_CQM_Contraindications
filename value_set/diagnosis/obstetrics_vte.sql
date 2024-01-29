@@ -1,11 +1,17 @@
+DROP TABLE IF EXISTS value_set.obstetrics_vte;
+CREATE TABLE IF NOT EXISTS value_set.obstetrics_vte
+(
+    id               BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    source_system    TEXT,
+    source_version   TEXT,
+    source_code      TEXT,
+    source_display   TEXT,
+    standard_system  TEXT,
+    standard_version TEXT,
+    standard_code    TEXT,
+    standard_display TEXT
+);
 /*
- Recreate materialized view for obstetrics-vte diagnosis codes.
- value set oid: 2.16.840.1.113883.3.117.1.7.1.264
- url: https://vsac.nlm.nih.gov/valueset/2.16.840.1.113883.3.117.1.7.1.264/expansion/MU2%20Update%202012-10-25
- Code System: ICD-9-CM
- Inclusion: Includes concepts that represent a diagnosis for venous thromboembolism related to pregnancy or obstetrics
- Exclusion: No exclusions.
- Definition Version: 20121025
  63460,
  63461,
  63462,
@@ -42,11 +48,3 @@
  67323,
  67324
  */
-DROP TABLE IF EXISTS value_set.obstetrics_vte;
-CREATE TABLE value_set.obstetrics_vte
-(
-    system  TEXT NOT NULL,
-    version TEXT NOT NULL,
-    code    TEXT NOT NULL,
-    display TEXT NOT NULL
-);

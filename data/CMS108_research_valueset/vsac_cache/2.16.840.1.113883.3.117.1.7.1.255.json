@@ -4,16 +4,17 @@
     "id": "2.16.840.1.113883.3.117.1.7.1.255",
     "meta": {
       "versionId": "14",
-      "lastUpdated": "2022-03-01T01:04:38.000-05:00",
+      "lastUpdated": "2023-12-21T17:43:03.000-05:00",
       "profile": [
         "http://hl7.org/fhir/StructureDefinition/shareablevalueset",
+        "http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/computable-valueset-cqfm",
         "http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/publishable-valueset-cqfm"
       ]
     },
     "extension": [
       {
         "url": "http://hl7.org/fhir/StructureDefinition/valueset-effectiveDate",
-        "valueDate": "2022-03-01"
+        "valueDate": "2015-04-30"
       }
     ],
     "url": "http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.117.1.7.1.255",
@@ -24,15 +25,15 @@
       }
     ],
     "version": "20150430",
-    "name": "General Surgery",
+    "name": "GeneralSurgery",
     "title": "General Surgery",
     "status": "retired",
     "experimental": false,
     "date": "2015-04-30T01:00:08-04:00",
     "publisher": "TJC EH Steward",
     "expansion": {
-      "identifier": "urn:uuid:cbcec18f-736a-4757-9edc-5479599db496",
-      "timestamp": "2023-12-20T21:33:25-05:00",
+      "identifier": "urn:uuid:5e3a249d-73e0-4071-8efb-85cdd61db608",
+      "timestamp": "2024-01-28T12:10:28-05:00",
       "total": 3832,
       "offset": 0,
       "parameter": [
@@ -6054,16 +6055,17 @@
     "id": "2.16.840.1.113883.3.117.1.7.1.255",
     "meta": {
       "versionId": "14",
-      "lastUpdated": "2022-03-01T01:04:38.000-05:00",
+      "lastUpdated": "2023-12-21T17:43:03.000-05:00",
       "profile": [
         "http://hl7.org/fhir/StructureDefinition/shareablevalueset",
+        "http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/computable-valueset-cqfm",
         "http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/publishable-valueset-cqfm"
       ]
     },
     "extension": [
       {
         "url": "http://hl7.org/fhir/StructureDefinition/valueset-effectiveDate",
-        "valueDate": "2022-03-01"
+        "valueDate": "2015-04-30"
       }
     ],
     "url": "http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.117.1.7.1.255",
@@ -6074,15 +6076,15 @@
       }
     ],
     "version": "20150430",
-    "name": "General Surgery",
+    "name": "GeneralSurgery",
     "title": "General Surgery",
     "status": "retired",
     "experimental": false,
     "date": "2015-04-30T01:00:08-04:00",
     "publisher": "TJC EH Steward",
     "expansion": {
-      "identifier": "urn:uuid:3a2d4d44-5f19-48ea-acda-db5e17f93f99",
-      "timestamp": "2023-12-20T21:33:29-05:00",
+      "identifier": "urn:uuid:5cdda709-69fc-42ab-b907-89e526efdc44",
+      "timestamp": "2024-01-28T12:10:36-05:00",
       "total": 3832,
       "offset": 1000,
       "parameter": [
@@ -12104,16 +12106,17 @@
     "id": "2.16.840.1.113883.3.117.1.7.1.255",
     "meta": {
       "versionId": "14",
-      "lastUpdated": "2022-03-01T01:04:38.000-05:00",
+      "lastUpdated": "2023-12-21T17:43:03.000-05:00",
       "profile": [
         "http://hl7.org/fhir/StructureDefinition/shareablevalueset",
+        "http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/computable-valueset-cqfm",
         "http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/publishable-valueset-cqfm"
       ]
     },
     "extension": [
       {
         "url": "http://hl7.org/fhir/StructureDefinition/valueset-effectiveDate",
-        "valueDate": "2022-03-01"
+        "valueDate": "2015-04-30"
       }
     ],
     "url": "http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.117.1.7.1.255",
@@ -12124,15 +12127,15 @@
       }
     ],
     "version": "20150430",
-    "name": "General Surgery",
+    "name": "GeneralSurgery",
     "title": "General Surgery",
     "status": "retired",
     "experimental": false,
     "date": "2015-04-30T01:00:08-04:00",
     "publisher": "TJC EH Steward",
     "expansion": {
-      "identifier": "urn:uuid:1bb6ebcc-cefa-4238-9a9d-528e95112c8e",
-      "timestamp": "2023-12-20T21:33:33-05:00",
+      "identifier": "urn:uuid:7958ff99-bc14-4303-a3d3-5cd6a13bfbb4",
+      "timestamp": "2024-01-28T12:10:45-05:00",
       "total": 3832,
       "offset": 2000,
       "parameter": [
@@ -18154,16 +18157,17 @@
     "id": "2.16.840.1.113883.3.117.1.7.1.255",
     "meta": {
       "versionId": "14",
-      "lastUpdated": "2022-03-01T01:04:38.000-05:00",
+      "lastUpdated": "2023-12-21T17:43:03.000-05:00",
       "profile": [
         "http://hl7.org/fhir/StructureDefinition/shareablevalueset",
+        "http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/computable-valueset-cqfm",
         "http://hl7.org/fhir/us/cqfmeasures/StructureDefinition/publishable-valueset-cqfm"
       ]
     },
     "extension": [
       {
         "url": "http://hl7.org/fhir/StructureDefinition/valueset-effectiveDate",
-        "valueDate": "2022-03-01"
+        "valueDate": "2015-04-30"
       }
     ],
     "url": "http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.117.1.7.1.255",
@@ -18174,15 +18178,15 @@
       }
     ],
     "version": "20150430",
-    "name": "General Surgery",
+    "name": "GeneralSurgery",
     "title": "General Surgery",
     "status": "retired",
     "experimental": false,
     "date": "2015-04-30T01:00:08-04:00",
     "publisher": "TJC EH Steward",
     "expansion": {
-      "identifier": "urn:uuid:c8e05db7-41ff-4313-bdf5-3c986f1e0b99",
-      "timestamp": "2023-12-20T21:33:36-05:00",
+      "identifier": "urn:uuid:21a9bb4d-13c7-41f0-8b5c-848d8494971b",
+      "timestamp": "2024-01-28T12:10:51-05:00",
       "total": 3832,
       "offset": 3000,
       "parameter": [
