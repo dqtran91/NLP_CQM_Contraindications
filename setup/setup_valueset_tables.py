@@ -8,7 +8,7 @@ logging.getLogger().setLevel(logging.INFO)
 
 if __name__ == '__main__':
     # create tables
-    value_set_folder_path = '../value_set'
+    value_set_folder_path = '../ecqm/value_set'
     sql_creation_folders = ['diagnosis', 'encounter', 'procedure']
     for folder in sql_creation_folders:
         SqlOperations.execute_sql_files(os.path.join(value_set_folder_path, folder))
