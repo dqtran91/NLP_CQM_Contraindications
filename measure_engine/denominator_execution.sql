@@ -9,159 +9,31 @@
 **********************************************/
 DROP TABLE IF EXISTS denominator_exclusions;
 CREATE TEMP TABLE IF NOT EXISTS denominator_exclusions AS
-/*
- - Encounter Less Than 2 Days:
- VTE."Encounter with Age Range and without VTE Diagnosis or Obstetrical Conditions" QualifyingEncounter
- where Global."LengthInDays" ( QualifyingEncounter.relevantPeriod ) < 2
- */
 SELECT *
-FROM vte.encounter_with_age_range_and_without_vte_or_obstetric_conds AS qualifying_encounter
-WHERE global.length_in_days(relevant_period) < 2 -- relevantPeriod in days
+FROM cms108.encounter_less_than_two_days
+/*
 UNION
 DISTINCT
-/*
- - Encounter with ICU Location Stay 1 Day or More:
- VTE."Encounter with Age Range and without VTE Diagnosis or Obstetrical Conditions" QualifyingEncounter
- where exists (
-    QualifyingEncounter.facilityLocations Location
-    where Location.code in "Intensive Care Unit"
-        and Global."LengthInDays" ( Location.locationPeriod ) >= 1
-        and Location.locationPeriod starts
-            during Interval[start of QualifyingEncounter.relevantPeriod, TJC."TruncateTime" ( start of QualifyingEncounter.relevantPeriod + 2 days ) ) )
- */
 SELECT *
-FROM vte.encounter_with_age_range_and_without_vte_or_obstetric_conds AS qualifying_encounter
-WHERE EXISTS (SELECT 1
-              FROM JSONB_ARRAY_ELEMENTS(qualifying_encounter.facility_locations) AS location
-              WHERE location ->> 'code' = 'ICU' AND
-                  global.length_in_days(cql.to_tsrange(location ->> 'location_period')) >= 1
-                  --  && is the overlap operator for TSRANGE and is equivalent to `during` between TSRANGE and TSRANGES
-                AND cql.to_tsrange(location ->> 'location_period') &&
-                    TSRANGE(LOWER(qualifying_encounter.relevant_period),
-                            tjc.truncate_time(UPPER(qualifying_encounter.relevant_period)) + INTERVAL '2 days', '[)'))
+FROM definition.encounter_with_icu_location_stay_one_day_or_more -- removed because it would removed 82% of the population
+ */
 UNION
 DISTINCT
-/*
- - Encounter with Principal Diagnosis of Mental Disorder or Stroke:
- VTE."Encounter with Age Range and without VTE Diagnosis or Obstetrical Conditions" QualifyingEncounter
- where exists (
-    QualifyingEncounter.diagnoses EncounterDiagnoses
-    where EncounterDiagnoses.rank = 1
-        and ( EncounterDiagnoses.code in "Mental Health Diagnoses"
-            or EncounterDiagnoses.code in "Hemorrhagic Stroke"
-            or EncounterDiagnoses.code in "Ischemic Stroke") )
- */
 SELECT *
-FROM vte.encounter_with_age_range_and_without_vte_or_obstetric_conds AS qualifying_encounter
-WHERE EXISTS (SELECT 1
-              FROM JSONB_ARRAY_ELEMENTS(qualifying_encounter.diagnoses) AS encounter_diagnoses
-              WHERE encounter_diagnoses ->> 'rank' = '1' AND encounter_diagnoses ->> 'code' IN (SELECT code
-                                                                                                FROM cql.get_icd9_code('value_set', 'mental_health_diagnoses')
-                                                                                                UNION
-                                                                                                DISTINCT
-                                                                                                SELECT code
-                                                                                                FROM cql.get_icd9_code('value_set', 'hemorrhagic_stroke')
-                                                                                                UNION
-                                                                                                DISTINCT
-                                                                                                SELECT code
-                                                                                                FROM cql.get_icd9_code('value_set', 'ischemic_stroke')))
+FROM cms108.encounter_with_principal_diagnosis_of_mental_disorder_or_stroke
 UNION
 DISTINCT
-/*
- - Encounter with Principal Procedure of SCIP VTE Selected Surgery:
- VTE."Encounter with Age Range and without VTE Diagnosis or Obstetrical Conditions" QualifyingEncounter
-    with ( "SCIP VTE Selected Surgery" Procedure where Procedure.rank = 1 ) SelectedSCIPProcedure
-        such that Global."NormalizeInterval" ( SelectedSCIPProcedure.relevantDatetime, SelectedSCIPProcedure.relevantPeriod )
-            during QualifyingEncounter.relevantPeriod
+SELECT *
+FROM cms108.encounter_with_principal_procedure_of_scip_vte_selected_surgery
+UNION
+DISTINCT
+SELECT *
+FROM cms108.encounter_with_intv_comfort_frm_hosp_start_day_to_day_after_adm
+UNION
+DISTINCT
+SELECT *
+FROM cms108.encounter_with_intv_comfort_on_day_of_or_day_after_procedure;
 
- - SCIP VTE Selected Surgery:
- ["Procedure, Performed": "General Surgery"]
-    union ["Procedure, Performed": "Gynecological Surgery"]
-    union ["Procedure, Performed": "Hip Fracture Surgery"]
-    union ["Procedure, Performed": "Hip Replacement Surgery"]
-    union ["Procedure, Performed": "Intracranial Neurosurgery"]
-    union ["Procedure, Performed": "Knee Replacement Surgery"]
-    union ["Procedure, Performed": "Urological Surgery"]
- */
-SELECT qualifying_encounter.*
-FROM vte.encounter_with_age_range_and_without_vte_or_obstetric_conds                  AS qualifying_encounter
-JOIN (SELECT *, NULL::TIMESTAMP AS relevant_datetime, NULL::TSRANGE AS relevant_period
-      FROM mimiciii.procedures_icd AS procedure
-      WHERE seq_num = 1 -- rank
-        AND icd9_code IN (SELECT code
-                          FROM cql.get_icd9_code('value_set', 'general_surgery')
-                          UNION
-                          DISTINCT
-                          SELECT code
-                          FROM cql.get_icd9_code('value_set', 'gynecological_surgery')
-                          UNION
-                          DISTINCT
-                          SELECT code
-                          FROM cql.get_icd9_code('value_set', 'hip_fracture_surgery')
-                          UNION
-                          DISTINCT
-                          SELECT code
-                          FROM cql.get_icd9_code('value_set', 'hip_replacement_surgery')
-                          UNION
-                          DISTINCT
-                          SELECT code
-                          FROM cql.get_icd9_code('value_set', 'intracranial_neurosurgery')
-                          UNION
-                          DISTINCT
-                          SELECT code
-                          FROM cql.get_icd9_code('value_set', 'knee_replacement_surgery')
-                          UNION
-                          DISTINCT
-                          SELECT code
-                          FROM cql.get_icd9_code('value_set', 'urological_surgery'))) AS selected_scip_procedure
-    ON qualifying_encounter.hadm_id = selected_scip_procedure.hadm_id
-WHERE global.normalize_interval(selected_scip_procedure.relevant_datetime,
-                                COALESCE(selected_scip_procedure.relevant_period,
-                                         qualifying_encounter.relevant_period)) && qualifying_encounter.relevant_period
-UNION
-DISTINCT
-/*
- - Encounter with Intervention Comfort Measures From Day of Start of Hospitalization To Day After Admission:
- VTE."Encounter with Age Range and without VTE Diagnosis or Obstetrical Conditions" QualifyingEncounter
- with "Intervention Comfort Measures" ComfortMeasures
-    such that Coalesce(start of Global."NormalizeInterval"(ComfortMeasures.relevantDatetime, ComfortMeasures.relevantPeriod), ComfortMeasures.authorDatetime)
-        during day of VTE."FromDayOfStartOfHospitalizationToDayAfterAdmission" ( QualifyingEncounter )
- */
-SELECT qualifying_encounter.*
-FROM vte.encounter_with_age_range_and_without_vte_or_obstetric_conds AS qualifying_encounter
-JOIN definition.intervention_comfort_measures                        AS comfort_measures
-    ON qualifying_encounter.hadm_id = comfort_measures.hadm_id
-WHERE COALESCE(LOWER(global.normalize_interval(comfort_measures.relevant_datetime, comfort_measures.relevant_period)),
-               comfort_measures.author_datetime)
-          -- <@ is the contains operator for TSRANGE and is equivalent to `during` between TIMESTAMPS and TSRANGES
-          <@
-      vte.from_day_of_start_of_hospitalization_to_day_after_admission(ROW (qualifying_encounter.hadm_id, qualifying_encounter.relevant_period))
-UNION
-DISTINCT
-/*
- - Encounter with Intervention Comfort Measures on Day of or Day After Procedure:
- from
-    VTE."Encounter with Age Range and without VTE Diagnosis or Obstetrical Conditions" QualifyingEncounter,
-    ["Procedure, Performed": "General or Neuraxial Anesthesia"] AnesthesiaProcedure,
-    "Intervention Comfort Measures" ComfortMeasures
- where Global."NormalizeInterval" ( AnesthesiaProcedure.relevantDatetime, AnesthesiaProcedure.relevantPeriod )
-        ends 1 day after day of start of QualifyingEncounter.relevantPeriod
-    and Coalesce(start of Global."NormalizeInterval"(ComfortMeasures.relevantDatetime, ComfortMeasures.relevantPeriod), ComfortMeasures.authorDatetime)
-        during day of TJC."CalendarDayOfOrDayAfter" (end of Global."NormalizeInterval" ( AnesthesiaProcedure.relevantDatetime, AnesthesiaProcedure.relevantPeriod ) )
- return QualifyingEncounter
- */
-SELECT qualifying_encounter.*
-FROM vte.encounter_with_age_range_and_without_vte_or_obstetric_conds AS qualifying_encounter
-JOIN definition.intervention_comfort_measures                        AS comfort_measures
-    ON qualifying_encounter.hadm_id = comfort_measures.hadm_id
-JOIN qdm.procedure_performed_general_or_neuraxial_anesthesia         AS AnesthesiaProcedure
-    ON AnesthesiaProcedure.hadm_id = qualifying_encounter.hadm_id
-WHERE UPPER(global.normalize_interval(AnesthesiaProcedure.relevant_datetime, AnesthesiaProcedure.relevant_period)) >
-      INTERVAL '1 DAY' + LOWER(qualifying_encounter.relevant_period)
-  AND COALESCE(LOWER(global.normalize_interval(comfort_measures.relevant_datetime, comfort_measures.relevant_period)),
-               comfort_measures.author_datetime) <@
-      tjc.calendar_day_of_or_day_after(UPPER(global.normalize_interval(AnesthesiaProcedure.relevant_datetime,
-                                                                       AnesthesiaProcedure.relevant_period)));
 
 /**********************************************
   Population Criteria:
@@ -172,7 +44,7 @@ WHERE UPPER(global.normalize_interval(AnesthesiaProcedure.relevant_datetime, Ane
 DROP TABLE IF EXISTS denominator;
 CREATE TEMP TABLE IF NOT EXISTS denominator AS
 SELECT *
-FROM vte.encounter_with_age_range_and_without_vte_or_obstetric_conds
+FROM vte.encounter_with_age_range_and_without_vte_or_obstetr_conditions
 EXCEPT
 SELECT *
 FROM denominator_exclusions;
@@ -181,3 +53,4 @@ SELECT COUNT(*)
 FROM denominator_exclusions;
 SELECT COUNT(*)
 FROM denominator;
+

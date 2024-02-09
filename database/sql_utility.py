@@ -98,18 +98,23 @@ class SqlOperations:
                 value_set_list.append(item)
         return value_set_list
 
-
     @classmethod
-    def execute_sql_files(cls, folder_path) -> None:
+    def execute_sql_folder(cls, folder_path: str) -> None:
         """
         Execute all sql files in a folder
         """
         sql_files: Generator[str, None, None] = (os.path.join(folder_path, file_name)
                                                  for file_name in os.listdir(folder_path) if file_name.endswith(".sql"))
         for file_name in sql_files:
-            with open(file_name, 'r') as file:
-                # Remove /* ... */ style comments
-                sql_script: str = re.sub(r'/\*.*?\*/', '', file.read(), flags=re.DOTALL)
+            cls.execute_sql_file(file_name)
 
-            cls.engine.execute(sql_script)
-            logging.info(f"Executed {file_name}")
+    @classmethod
+    def execute_sql_file(cls, file_name: str) -> None:
+        """
+        Execute a sql file
+        """
+        with open(file_name, 'r') as file:
+            # Remove /* ... */ style comments
+            sql_script: str = re.sub(r'/\*.*?\*/', '', file.read(), flags=re.DOTALL)
+        cls.engine.execute(sql_script)
+        logging.info(f"Executed {file_name}")

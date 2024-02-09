@@ -13,6 +13,7 @@ DROP MATERIALIZED VIEW IF EXISTS value_set.graduated_compression_stockings_order
 CREATE MATERIALIZED VIEW IF NOT EXISTS value_set.graduated_compression_stockings_ordered AS
 SELECT DISTINCT *
 FROM mimiciii.d_items
-WHERE label ILIKE '%compression%'   -- graduated or pneumatic compression devices value set
-   OR label ILIKE '%stocking%'   -- graduated or pneumatic compression devices value set
+WHERE label ILIKE '%compression%' -- graduated or pneumatic compression devices value set
+   OR label ILIKE '%stocking%'    -- graduated or pneumatic compression devices value set
    OR label ILIKE '%hosiery%'
+   OR label ILIKE '%anti embolic device%';
