@@ -1,6 +1,6 @@
 CREATE OR REPLACE VIEW cms108.initial_population AS
 SELECT *
-FROM vte.encounter_with_age_range_and_without_vte_or_obstetrical_conds;
+FROM vte.encounter_with_age_range_and_without_vte_or_obstetr_conditions;
 
 COMMENT ON VIEW cms108.initial_population IS '
 Initial Population
