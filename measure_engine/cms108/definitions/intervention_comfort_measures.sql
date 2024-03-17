@@ -1,8 +1,7 @@
 CREATE OR REPLACE VIEW cms108.intervention_comfort_measures AS
 SELECT *
 FROM qdm.interventions_ordered_comfort_measures
-UNION
-DISTINCT
+UNION DISTINCT
 SELECT *
 FROM qdm.interventions_performed_comfort_measures;
 

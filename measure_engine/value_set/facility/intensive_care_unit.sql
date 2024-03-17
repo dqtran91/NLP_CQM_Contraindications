@@ -1,17 +1,28 @@
-/*
- Clinical Focus: The purpose of this value set is to represent concepts of inpatient hospitalization encounters.
- Value set OID: 2.16.840.1.113762.1.4.1029.206
- Url: https://vsac.nlm.nih.gov/valueset/2.16.840.1.113762.1.4.1029.206/expansion/eCQM%20Update%202022-05-05
- Code System: SNOMEDCT
- Definition Version: 20210220
- Inclusion: Includes concepts that represent a location for an adult or pediatric intensive care unit (ICU).
- Exclusion: Excludes concepts that represent neonatal intensive care units (NICU).
- Note: The available open-source snomed-to-icd did not gave results for the snomed code in this value set, so joining
-    with the icustays table based on patients and admissions id will filter out the ICU stays.
-    Additionally, there is no need for this view, as the icustays is the information needed.
- */
--- DROP MATERIALIZED VIEW IF EXISTS value_set.intensive_care_unit;
--- CREATE MATERIALIZED VIEW value_set.intensive_care_unit AS
-SELECT distinct first_careunit
-FROM icustays
-WHERE UPPER(first_careunit) != 'NICU';
+DROP TABLE IF EXISTS value_set.intensive_care_unit;
+
+CREATE TABLE IF NOT EXISTS value_set.intensive_care_unit
+(
+    id               BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    source_system    TEXT,
+    source_version   TEXT,
+    source_code      TEXT,
+    source_display   TEXT,
+    standard_system  TEXT,
+    standard_version TEXT,
+    standard_code    TEXT,
+    standard_display TEXT
+);
+
+COMMENT ON TABLE value_set.intensive_care_unit IS '
+Name: Intensive Care Unit
+OID: 2.16.840.1.113762.1.4.1029.206
+Definition Version: 20190305
+Code System: HSLOC, SNOMEDCT
+Clinical Focus: This value set contains concepts that represent adult and pediatric intensive care units (ICU).
+Data Element Scope: This value set may use Quality Data Model (QDM) datatype related to Encounter, Performed, or attribute related to Location.
+    The intent of this data element is to identify patients in intensive care units.
+Inclusion Criteria: Includes only relevant concepts associated adult and pediatric intensive care units (ICU).
+    This is a grouping of HSLOC and SNOMEDCT codes.
+Exclusion Criteria: Excludes concepts that pertain to neonatal intensive care units (NICU).
+URL: https://vsac.nlm.nih.gov/valueset/2.16.840.1.113762.1.4.1029.206/expansion/eCQM%20Update%202019-05-10
+Note: From (NLM, 2023).';

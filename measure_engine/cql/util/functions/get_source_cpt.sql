@@ -7,5 +7,4 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-COMMENT ON FUNCTION cql.get_source_cpt(IN TEXT, OUT GLOBAL.CODE) IS '
-Get the source CPT code set for a given value set that is native to MIMIC-III';
+COMMENT ON FUNCTION cql.get_source_cpt(IN TEXT, OUT GLOBAL.CODE) IS 'Get the source CPT code set for a given value set that is native to MIMIC-III';

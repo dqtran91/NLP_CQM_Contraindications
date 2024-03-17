@@ -1,48 +1,27 @@
-/*
- Recreate materialized view for patient-refusal value-set codes.
- value set oid: 2.16.840.1.113883.3.117.1.7.1.93
- url: https://vsac.nlm.nih.gov/valueset/2.16.840.1.113883.3.117.1.7.1.93/expansion/eCQM%20Update%202022-05-05
- CodeSystem: SNOMEDCT
- Definition version: 20210220
- Inclusion: Includes concepts that identify a negation rationale for refusal of any intervention.
- Exclusion: No exclusions
- note: The available open-source snomed-to-icd did not gave results for the snomed code in this value set,
- so there are no results for this value set.
- */
-DROP MATERIALIZED VIEW IF EXISTS value_set.patient_refusal;
-CREATE MATERIALIZED VIEW value_set.patient_refusal AS
-SELECT NULL AS patient_refusal;
+DROP TABLE IF EXISTS value_set.patient_refusal;
 
-select * from inputevents_cv limit 100;
+CREATE TABLE IF NOT EXISTS value_set.patient_refusal
+(
+    id               BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
+    source_system    TEXT,
+    source_version   TEXT,
+    source_code      TEXT,
+    source_display   TEXT,
+    standard_system  TEXT,
+    standard_version TEXT,
+    standard_code    TEXT,
+    standard_display TEXT
+);
 
-select *
-from inputevents_mv
-where statusdescription = 'Stopped'
-limit 100;
-
-select *
-from inputevents_mv
-where cancelreason = 1
-limit 100;
-
-select *
-from inputevents_mv
-where cancelreason = 2
-limit 100;
-
-select DISTINCT warning
-from chartevents;
-
-select distinct error
-from chartevents;
-
-select distinct resultstatus
-from chartevents;
-
-select DISTINCT stopped from chartevents;
-
-select DISTINCT cancelreason from inputevents_mv;
-select DISTINCT statusdescription from inputevents_mv;
-
-select DISTINCT cancelreason from procedureevents_mv;
-select DISTINCT statusdescription from procedureevents_mv;
+COMMENT ON TABLE value_set.patient_refusal IS '
+Name: Patient Refusal
+OID: 2.16.840.1.113883.3.117.1.7.1.93
+Code System: SNOMEDCT
+Definition Version: 20150430
+Clinical Focus: This set of values contains situations representing a patient''s refusal for treatment.
+Data Element Scope: The intent of this data element is to identify reasons a patient refuses treatment.
+    Using the Quality Data Model, this particular element will map to the " reason" attribute.
+Inclusion Criteria: Only SNOMED CT codes representing a patient refusal should be included.
+Exclusion Criteria: Exclude codes that do not meet the inclusion criteria.
+URL: https://vsac.nlm.nih.gov/valueset/2.16.840.1.113883.3.117.1.7.1.93/expansion/MU2%20Update%202015-05-01
+Note: From (NLM, 2023).';

@@ -1,4 +1,5 @@
 DROP TABLE IF EXISTS value_set.obstetrical_or_pregnancy_related_conditions;
+
 CREATE TABLE IF NOT EXISTS value_set.obstetrical_or_pregnancy_related_conditions
 (
     id               BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
@@ -11,6 +12,20 @@ CREATE TABLE IF NOT EXISTS value_set.obstetrical_or_pregnancy_related_conditions
     standard_code    TEXT,
     standard_display TEXT
 );
+
+COMMENT ON TABLE value_set.obstetrical_or_pregnancy_related_conditions IS '
+Name: Obstetrics
+OID: 2.16.840.1.113883.3.117.1.7.1.263
+Code System: ICD10CM, ICD9CM, SNOMEDCT
+Definition Version: 20150430
+Clinical Focus: This grouping of value sets identifies patients who have a condition related to pregnancy or obstetrics.
+Data Element Scope: The intent of this data element is to identify patients who have a condition, problem or diagnosis related to pregnancy or obstetrics.
+    Using the Quality Data Model, this particular element will map to either the Diagnosis category.
+Inclusion Criteria: Only use codes which represent a condition, problem or diagnosis related to pregnancy or obstetrics.
+    This is a grouping of ICD9, ICD10 and SNOMED-CT codes and concepts.
+Exclusion Criteria: Exclude codes that do not meet the inclusion criteria.
+URL: https://vsac.nlm.nih.gov/valueset/2.16.840.1.113883.3.117.1.7.1.263/expansion/MU2%20Update%202015-05-01
+Note: From (NLM, 2023).';
 /*
  6380,
  6381,

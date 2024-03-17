@@ -1,4 +1,5 @@
 DROP TABLE IF EXISTS value_set.general_surgery;
+
 CREATE TABLE IF NOT EXISTS value_set.general_surgery
 (
     id               BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
@@ -11,6 +12,22 @@ CREATE TABLE IF NOT EXISTS value_set.general_surgery
     standard_code    TEXT,
     standard_display TEXT
 );
+
+COMMENT ON TABLE value_set.general_surgery IS '
+Name: General Surgery
+OID: 2.16.840.1.113883.3.117.1.7.1.255
+Code System: ICD10PCS, ICD9CM, SNOMEDCT
+Definition Version: 20150430
+Clinical Focus: This grouping of value sets contains value sets which identify patients who have a general surgery procedure.
+    These surgical procedures are thoracic and abdominal procedures, except for cardiac procedures.
+Data Element Scope: The intent of this data element is to identify patients who have general surgery procedures.
+    Using the Quality Data Model, this data element maps to the Procedure category.
+Inclusion Criteria: Only include codes which represent general surgery. These surgical procedures are thoracic and abdominal procedures, except for cardiac procedures.
+    This is a grouping of ICD9, ICD10PCS and SNOMED-CT codes and concepts.
+Exclusion Criteria: Exclude codes for any other surgeries except general thoracic and abdominal procedures as defined in the inclusion criteria.
+URL: https://vsac.nlm.nih.gov/valueset/2.16.840.1.113883.3.117.1.7.1.255/expansion/MU2%20Update%202015-05-01
+Note: From (NLM, 2023).';
+
 /*
  SELECT * FROM value_set.general_surgery where standard_system = 'http://hl7.org/fhir/sid/icd-9-cm';
  0213

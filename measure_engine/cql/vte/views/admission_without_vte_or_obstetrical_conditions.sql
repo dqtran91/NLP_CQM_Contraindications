@@ -5,12 +5,10 @@ WHERE NOT EXISTS (SELECT 1
                   FROM JSONB_ARRAY_ELEMENTS(enc.diagnoses) AS diag
                   WHERE diag ->> 'code' IN (SELECT code
                                             FROM cql.get_standard_icd9('obstetrical_or_pregnancy_related_conditions')
-                                            UNION
-                                            DISTINCT
+                                            UNION DISTINCT
                                             SELECT code
                                             FROM cql.get_standard_icd9('venous_thromboembolism')
-                                            UNION
-                                            DISTINCT
+                                            UNION DISTINCT
                                             SELECT code
                                             FROM cql.get_standard_icd9('obstetrics_vte')));
 
@@ -26,4 +24,3 @@ VTE.Admission without VTE or Obstetrical Conditions
       )
 
 Note: From CMS108v11 (eCQI, 2023).';
-

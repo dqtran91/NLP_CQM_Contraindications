@@ -1,4 +1,5 @@
 DROP TABLE IF EXISTS value_set.mental_health_diagnoses;
+
 CREATE TABLE IF NOT EXISTS value_set.mental_health_diagnoses
 (
     id               BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
@@ -11,6 +12,18 @@ CREATE TABLE IF NOT EXISTS value_set.mental_health_diagnoses
     standard_code    TEXT,
     standard_display TEXT
 );
+
+COMMENT ON TABLE value_set.mental_health_diagnoses IS '
+Name: Mental Health Diagnoses
+OID: 2.16.840.1.113883.3.464.1003.105.12.1004
+Code System: ICD10CM, ICD9CM, SNOMEDCT
+Definition Version: 20150430
+Clinical Focus: The purpose of this value set is to represent concepts for a diagnosis of mental health disorders.
+Data Element Scope: This value set may use a model element related to Diagnosis.
+Inclusion Criteria: Includes concepts that represent a diagnosis for mental health disorders.
+Exclusion Criteria: No exclusions.
+URL: https://vsac.nlm.nih.gov/valueset/2.16.840.1.113883.3.464.1003.105.12.1004/expansion/MU2%20Update%202015-05-01
+Note: From (NLM, 2023). Description fields was blank for 2015 version so used 2023 version for clinical focus, data element scope, inclusion criteria, and exclusion criteria.';
 /*
  311,
  316,

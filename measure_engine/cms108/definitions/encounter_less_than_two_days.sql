@@ -1,6 +1,6 @@
 CREATE OR REPLACE VIEW cms108.encounter_less_than_two_days AS
 SELECT *
-FROM vte.encounter_with_age_range_and_without_vte_or_obstetr_conditions AS qualifying_encounter
+FROM vte.enc_wth_age_range_and_without_vte_diag_or_obstetrical_conds AS qualifying_encounter
 WHERE global.length_in_days(relevant_period) < 2;
 
 COMMENT ON VIEW cms108.encounter_less_than_two_days IS '

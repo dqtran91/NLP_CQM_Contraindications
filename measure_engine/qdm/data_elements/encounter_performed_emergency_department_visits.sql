@@ -1,7 +1,7 @@
 CREATE OR REPLACE VIEW qdm.encounter_performed_emergency_department_visits AS
 SELECT *
-FROM qdm.encounters AS enc
-WHERE enc.hadm_id IN (SELECT hadm_id FROM mimiciii.admissions WHERE admission_type = 'EMERGENCY');
+FROM qdm.encounter_performed
+WHERE admission_type IN (SELECT code FROM cql.get_source_mimiciii('emergency_department_visit'));
 
 COMMENT ON VIEW qdm.encounter_performed_emergency_department_visits IS '
 QDM Data Element

@@ -12,4 +12,3 @@ VTE.FromDayOfStartOfHospitalizationToDayAfterAdmission(Encounter "Encounter, Per
     Interval[TJC."TruncateTime" ( start of Global."HospitalizationWithObservation" ( Encounter ) ), TJC."TruncateTime" ( start of Encounter.relevantPeriod + 2 days ) )
 
 Note:FROM CMS108v11 (eCQI, 2023).';
-

@@ -1,12 +1,11 @@
 CREATE OR REPLACE VIEW qdm.procedure_performed_general_or_neuraxial_anesthesia AS
-SELECT DISTINCT enc.subject_id,
-                enc.hadm_id,
-                NULL::TIMESTAMP AS relevant_datetime, -- MIMIC does not have a relevant datetime for procedures
-                NULL::TSRANGE   AS relevant_period    -- MIMIC does not have a relevant period for procedures
-FROM qdm.encounters AS enc
-WHERE EXISTS (SELECT 1
-              FROM JSONB_ARRAY_ELEMENTS(enc.diagnoses) AS diag
-              WHERE diag ->> 'code' IN (SELECT code FROM cql.get_standard_icd9('general_or_neuraxial_anesthesia')));
+SELECT pp.subject_id,
+       pp.hadm_id,
+       JSONB_AGG(proc ORDER BY proc ->> 'rank') AS procedures
+FROM qdm.procedure_performed             AS pp,
+     JSONB_ARRAY_ELEMENTS(pp.procedures) AS proc
+WHERE proc ->> 'code' IN (SELECT code FROM cql.get_source_mimiciii('general_or_neuraxial_anesthesia'))
+GROUP BY pp.subject_id, pp.hadm_id;
 
 COMMENT ON VIEW qdm.procedure_performed_general_or_neuraxial_anesthesia IS '
 QDM Data Element

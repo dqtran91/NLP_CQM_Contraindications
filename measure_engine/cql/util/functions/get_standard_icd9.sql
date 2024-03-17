@@ -8,5 +8,4 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-COMMENT ON FUNCTION cql.get_standard_icd9(IN TEXT, OUT GLOBAL.CODE) IS '
-Get the standard ICD-9 code set for a given value set that is from VSAC';
+COMMENT ON FUNCTION cql.get_standard_icd9(IN TEXT, OUT GLOBAL.CODE) IS 'Get the standard ICD-9 code set for a given value set that is from VSAC';

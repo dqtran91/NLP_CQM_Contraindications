@@ -1,34 +1,31 @@
 CREATE OR REPLACE VIEW cms108.scip_vte_selected_surgery AS
 SELECT q.hadm_id,
        q.subject_id,
-       JSONB_AGG(JSONB_BUILD_OBJECT('code', p ->> 'code', 'rank', (p ->> 'rank')::INT, 'relevant_datetime', p ->> 'relevant_datetime',
-                                    'relevant_period', p ->> 'relevant_period') ORDER BY (p ->> 'rank')::INT) AS procedures
+       JSONB_AGG(JSONB_BUILD_OBJECT('code', p ->> 'code',
+                                    'rank', (p ->> 'rank')::INT,
+                                    'relevant_datetime', p ->> 'relevant_datetime',
+                                    'relevant_period', p ->> 'relevant_period')
+                 ORDER BY (p ->> 'rank')::INT) AS procedures
 FROM qdm.procedures                     AS q,
      JSONB_ARRAY_ELEMENTS(q.procedures) AS p
 WHERE p ->> 'code' IN (SELECT code
                        FROM cql.get_standard_icd9('general_surgery')
-                       UNION
-                       DISTINCT
+                       UNION DISTINCT
                        SELECT code
                        FROM cql.get_standard_icd9('gynecological_surgery')
-                       UNION
-                       DISTINCT
+                       UNION DISTINCT
                        SELECT code
                        FROM cql.get_standard_icd9('hip_fracture_surgery')
-                       UNION
-                       DISTINCT
+                       UNION DISTINCT
                        SELECT code
                        FROM cql.get_standard_icd9('hip_replacement_surgery')
-                       UNION
-                       DISTINCT
+                       UNION DISTINCT
                        SELECT code
                        FROM cql.get_standard_icd9('intracranial_neurosurgery')
-                       UNION
-                       DISTINCT
+                       UNION DISTINCT
                        SELECT code
                        FROM cql.get_standard_icd9('knee_replacement_surgery')
-                       UNION
-                       DISTINCT
+                       UNION DISTINCT
                        SELECT code
                        FROM cql.get_standard_icd9('urological_surgery'))
 GROUP BY q.hadm_id, q.subject_id;

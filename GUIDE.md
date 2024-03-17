@@ -4,9 +4,9 @@
 The TSRANGE datatype is equivalent to the CQL Interval values (HL7, 2023, Author's Guide).
 - <@ is the contains operator for TSRANGE and is equivalent to `during` between TIMESTAMPS and TSRANGES
 
-# VSAC Guide
-Almost all the value sets use the definition version of 20150430 except the following where there was no earlier version available 
-, or where the version was the same year but different month and day:
+# Value Set Guide
+Almost all the value sets use the definition version of 20150430 except the following where there were no earlier versions available 
+(except where it was the same year but different month and day):
 - Application of Graduated Compression Stockings (GCS): 20220212
 - Application of Intermittent Pneumatic Compression Devices (IPC): 20220212
 - Application of Venous Foot Pumps (VFP): 20220212
@@ -14,6 +14,10 @@ Almost all the value sets use the definition version of 20150430 except the foll
 - Intensive Care Unit: 20190305
 - Observation Services: 20180321
 - ONC Administrative Sex: 20150331
-- Payer: 20121025
+- Payer type: 20121025
 - Race: 20121025
 - Rivaroxaban and Betrixaban for VTE Prophylaxis: 20200305
+- VTE Risk Assessment: 20170726
+
+# Abbreviations
+Route of administration abbreviations came from the Food and Administration (FDA) guide (2017).

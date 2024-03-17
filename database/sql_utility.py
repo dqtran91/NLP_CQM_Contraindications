@@ -2,6 +2,7 @@ import json
 import logging
 import os
 import re
+import time
 from typing import Dict, List, Generator
 
 import sqlalchemy as sa
@@ -79,13 +80,20 @@ class SqlOperations:
             value_set_list: List[Dict[str, str]] = cls.deduplicate_value_set(raw_value_set_list)
 
             # Insert parsed data into the table
+            start_time: float = time.time()
             for item in value_set_list:
+                display: str = item.get('display').replace("'", "''")
                 cls.engine.execute(
-                    f"INSERT INTO value_set.{table_name} "
-                    f"(standard_system, standard_version, standard_code, standard_display) VALUES (%s, %s, %s, %s)",
-                    (item.get('system', ''), item.get('version', ''), item.get('code', ''), item.get('display', ''))
+                    f"""
+                    INSERT INTO value_set.{table_name}
+                    (standard_system, standard_version, standard_code, standard_display) 
+                    VALUES
+                    ('{item.get('system')}', '{item.get('version')}', '{item.get('code')}', '{display}');
+                    """
                 )
-            logging.info(f"Inserted codes into {table_name}")
+            end_time: float = time.time()
+
+            logging.info(f"Inserted codes into {table_name}. Time taken: {cls.format_time(start_time, end_time)} ms.")
 
     @classmethod
     def deduplicate_value_set(cls, raw_value_set_list: List[Dict[str, str]]) -> List[Dict[str, str]]:
@@ -115,6 +123,18 @@ class SqlOperations:
         """
         with open(file_name, 'r') as file:
             # Remove /* ... */ style comments
-            sql_script: str = re.sub(r'/\*.*?\*/', '', file.read(), flags=re.DOTALL)
+            pass_one: str = re.sub(r'/\*.*?\*/', '', file.read(), flags=re.DOTALL)
+            # Escape % signs
+            sql_script = pass_one.replace('%', '%%')
+        start_time: float = time.time()
         cls.engine.execute(sql_script)
-        logging.info(f"Executed {file_name}")
+        end_time: float = time.time()
+        logging.info(f"Executed {file_name}. Time taken: {cls.format_time(start_time, end_time)} ms.")
+
+    @classmethod
+    def format_time(cls, start_time: float, end_time: float) -> str:
+        """
+        Format time
+
+        """
+        return f"{(end_time - start_time) * 10 ** 3:.03f}"
